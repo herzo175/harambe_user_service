@@ -6,4 +6,5 @@
 > npm install
 ````
 
-Then, create set enviroment variables listed in the config.js file (using global variables or a .env file)
+Then set enviroment variables listed in the config.js file 
+(using global variables or a .env file in the root directory)
