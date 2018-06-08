@@ -20,7 +20,8 @@ describe('register', () => {
     index.register(userObj)
       .then(token => {
         const decipher = crypto.createDecipher(passwordCipherAlg, passwordKey);
-        const user = jwt.verify(token, jwtKey).user;
+        const decrypted = jwt.verify(token, jwtKey);
+        const user = decrypted.user;
 
         expect(user.email).toBe('testEmail');
         expect(
@@ -59,7 +60,7 @@ describe('register', () => {
 describe('checkLogin', () => {
   test('should return data for valid token', () => {
     const token = jwt.sign({
-      exp: Math.floor(Date.now() / 1000) + (60 * 60),
+      exp: Date.now() + (1000 * 60 * 60),
       foo: 'bar'
     }, jwtKey)
 
@@ -71,7 +72,7 @@ describe('checkLogin', () => {
 
   test('should return false for an invalid', () => {
     const token = jwt.sign({
-      exp: Math.floor(Date.now() / 1000) - (60 * 60)
+      exp: Date.now() + (1000 * 60 * 60)
     }, 'wrong-key')
 
     index.checkLogin(token, (err, result) => {
@@ -82,7 +83,7 @@ describe('checkLogin', () => {
 
   test('should return false for an expired token', () => {
     const token = jwt.sign({
-      exp: Math.floor(Date.now() / 1000) - (60 * 60)
+      exp: Date.now() - (1000 * 60 * 60)
     }, jwtKey)
 
     index.checkLogin(token, (err, result) => {

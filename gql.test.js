@@ -13,7 +13,7 @@ describe('user tests', () => {
   let id;
 
   beforeAll(done => {
-    const userObj = { email: "testEmail", password: "testPassword", firstName: "testFirstName", lastName: "testLastName" };
+    const userObj = { email: "testGqlEmail", password: "testPassword", firstName: "testFirstName", lastName: "testLastName" };
 
     index
       .register(userObj)
@@ -74,7 +74,7 @@ describe('user tests', () => {
     result.then(response => {
       console.log(response);
       const decipher = crypto.createDecipher(passwordCipherAlg, passwordKey);
-      expect(response.data.updateUser.email).toBe("testEmail");
+      expect(response.data.updateUser.email).toBe("testGqlEmail");
       expect(
         decipher.update(response.data.updateUser.password, "hex", "utf8") + decipher.final("utf8"))
         .toBe("newPassword");

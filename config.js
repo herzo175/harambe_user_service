@@ -6,9 +6,9 @@
 require("dotenv").config();
 
 module.exports = {
-  jwtKey: process.env.JWT_KEY,
-  dbURL: process.env.DB_URL,
-  dbName: process.env.DB_NAME,
-  passwordCipherAlg: process.env.PASSWORD_CIPHER_ALG,
-  passwordKey: process.env.PASSWORD_KEY
+  jwtKey: process.env.JWT_KEY, // json web token signing key
+  dbURL: process.env.DB_URL, // mongodb url
+  dbName: process.env.DB_NAME, // mongodb database name
+  passwordCipherAlg: process.env.PASSWORD_CIPHER_ALG, // aes192
+  passwordKey: process.env.PASSWORD_KEY // key to encrypt passwords in db
 };
