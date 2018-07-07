@@ -10,17 +10,20 @@ build:
 
 # run terminal inside of container and mirror changes outside of container
 # clean up after exit (ctrl+d)
-# note that order of args matters
+# import secret .env file
+# set any additonal env variables
 debug:
 	docker run -it --rm \
 		--volume $(shell pwd):/app \
 		--env-file=.env \
+		-e PORT=$(CONTAINER_PORT) \
 		-p $(LOCAL_PORT):$(CONTAINER_PORT) \
 		$(NAME):$(VERSION) /bin/bash \
 
 run:
 	docker run -p $(LOCAL_PORT):$(CONTAINER_PORT) \
 		--env-file=.env \
+		-e PORT=$(CONTAINER_PORT) \
 		$(NAME):$(VERSION)
 
 clean:
