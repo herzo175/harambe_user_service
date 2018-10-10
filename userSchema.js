@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 
 const config = require("./config");
 const index = require("./index");
-const { BankAccount, BankAccountType } = require("./bankAccountSchema");
+const { BrokerAccount, BrokerAccountType } = require("./brokerAccountSchema");
+const { Transaction, TransactionType, transactionTypes } = require("./transactionSchema");
 
 const {
   GraphQLObjectType,
@@ -13,7 +14,8 @@ const {
   GraphQLNonNull,
   GraphQLID,
   GraphQLBoolean,
-  GraphQLList
+  GraphQLList,
+  GraphQLFloat
 } = graphql;
 
 let user = {};
@@ -71,10 +73,33 @@ user.UserType = new GraphQLObjectType({
         })
       })
     },
-    bankAccounts: {
-      type: new GraphQLList(BankAccountType),
+    brokerAccounts: {
+      type: new GraphQLList(BrokerAccountType),
       resolve: (user) => {
-        return BankAccount.find({user: user._id})
+        // user is the DB object that was found by the type's resolver
+        return BrokerAccount.find({user: user._id});
+      }
+    },
+    transactions: {
+      type: new GraphQLList(TransactionType),
+      resolve: (user) => {
+        return Transaction.find({user: user._id});
+      }
+    },
+    accountValue: {
+      type: GraphQLFloat,
+      resolve: async user => {
+        const transactions = await Transaction.find({user: user._id});
+        return transactions.reduce((acc, t) => {
+          switch (t.type) {
+            case transactionTypes.DEPOSIT:
+              return acc + t.amount;
+            case transactionTypes.WITHDRAWL:
+              return acc - t.amount;
+            default:
+              return acc;
+          }
+        }, 0);
       }
     }
   })

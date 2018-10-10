@@ -9,5 +9,6 @@ module.exports = {
   jwtKey: process.env.JWT_KEY, // json web token signing key
   dbURL: process.env.DB_URL, // mongodb url
   dbName: process.env.DB_NAME, // mongodb database name
-  port: process.env.PORT
+  port: process.env.PORT,
+  tradeItApiKey: process.env.TRADEIT_API_KEY
 };

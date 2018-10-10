@@ -1,7 +1,8 @@
 const graphql = require("graphql");
 
 const userSchema = require("./userSchema");
-const bankAccountSchema = require("./bankAccountSchema");
+const brokerAccountSchema = require("./brokerAccountSchema");
+const transactionSchema = require("./transactionSchema");
 
 const {
   GraphQLObjectType
@@ -11,7 +12,8 @@ const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
     User: userSchema.userQuery,
-    BankAccount: bankAccountSchema.bankAccountQuery
+    BrokerAccount: brokerAccountSchema.brokerAccountQuery,
+    Transaction: transactionSchema.transactionQuery
   }
 });
 
@@ -25,9 +27,12 @@ const Mutation = new GraphQLObjectType({
     setNotificationMethodSms: userSchema.setNotificationMethodSms,
     setNotificationTopicAnnouncements: userSchema.setNotificationTopicAnnouncements,
     setNotificationTopicAccount: userSchema.setNotificationTopicAccount,
-    createBankAccount: bankAccountSchema.createBankAccount,
-    setBankAccountDefault: bankAccountSchema.setBankAccountDefault,
-    deleteBankAccount: bankAccountSchema.deleteBankAccount
+    listBrokers: brokerAccountSchema.listBrokers,
+    createBrokerLoginUrl: brokerAccountSchema.createBrokerLoginUrl,
+    createBrokerAccount: brokerAccountSchema.createBrokerAccount,
+    setBrokerAccountDefault: brokerAccountSchema.setBrokerAccountDefault,
+    deleteBrokerAccount: brokerAccountSchema.deleteBrokerAccount,
+    createTransaction: transactionSchema.createTransaction
   }
 });
 

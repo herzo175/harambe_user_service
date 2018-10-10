@@ -1,5 +1,3 @@
-build:
-
 CONTAINER_PORT=8080
 LOCAL_PORT=8080
 NAME=harambe_user_service
