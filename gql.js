@@ -1,81 +1,42 @@
 const graphql = require("graphql");
-const crypto = require("crypto");
 
-const index = require("./index");
-const config = require("./config");
+const userSchema = require("./userSchema");
+const brokerAccountSchema = require("./brokerAccountSchema");
+const transactionSchema = require("./transactionSchema");
 
-const passwordCipherAlg = config.passwordCipherAlg;
-const passwordKey = config.passwordKey;
 const {
-  GraphQLObjectType,
-  GraphQLString,
-  GraphQLSchema,
-  GraphQLID,
-  GraphQLInt,
-  GraphQLList
+  GraphQLObjectType
 } = graphql;
 
-const UserType = new GraphQLObjectType({
-  name: "User",
-  fields: () => ({
-    _id: { type: GraphQLID },
-    firstName: { type: GraphQLString },
-    lastName: { type: GraphQLString },
-    email: { type: GraphQLString },
-    password: { type: GraphQLString }
-  })
-});
-
 const RootQuery = new GraphQLObjectType({
-  name: 'RootQueryType',
+  name: "RootQueryType",
   fields: {
-    User: {
-      type: UserType,
-      args: { _id: { type: GraphQLID } },
-      resolve: (parent, args) => {
-        return index.User.findById(args._id);
-      }
-    }
+    User: userSchema.userQuery,
+    BrokerAccount: brokerAccountSchema.brokerAccountQuery,
+    Transaction: transactionSchema.transactionQuery
   }
 });
 
+// TODO: move resolvers to another file
 const Mutation = new GraphQLObjectType({
-  name: 'Mutation',
+  name: "Mutation",
   fields: {
-    // TODO: split user mutations into multiple setters
-    updateUser: {
-      type: UserType,
-      args: {
-        _id: { type: GraphQLID },
-        email: { type: GraphQLString },
-        password: { type: GraphQLString }
-      },
-      resolve: (parent, args) => {
-        // console.log(args);
-        const cipher = crypto.createCipher(passwordCipherAlg, passwordKey);
-        // const encrypted = cipher.update(args.password, "utf8", "hex") + cipher.final('hex');
-
-        return new Promise(
-          (resolve, reject) => {
-            index.User.findById(args._id)
-              .then(user => {
-                user.save();
-                user.password = args.password ? cipher.update(args.password, "utf8", "hex") + cipher.final('hex') : user.password;
-                user.email = args.email || user.email
-                resolve(user);
-              })
-              .catch(err => {
-                reject(err);
-              })
-          }
-        );
-      }
-    }
+    register: userSchema.register,
+    login: userSchema.login,
+    setNotificationMethodEmail: userSchema.setNotificationMethodEmail,
+    setNotificationMethodSms: userSchema.setNotificationMethodSms,
+    setNotificationTopicAnnouncements: userSchema.setNotificationTopicAnnouncements,
+    setNotificationTopicAccount: userSchema.setNotificationTopicAccount,
+    listBrokers: brokerAccountSchema.listBrokers,
+    createBrokerLoginUrl: brokerAccountSchema.createBrokerLoginUrl,
+    createBrokerAccount: brokerAccountSchema.createBrokerAccount,
+    setBrokerAccountDefault: brokerAccountSchema.setBrokerAccountDefault,
+    deleteBrokerAccount: brokerAccountSchema.deleteBrokerAccount,
+    createTransaction: transactionSchema.createTransaction
   }
 });
 
 module.exports = {
-  UserType,
   RootQuery,
   Mutation
 };
